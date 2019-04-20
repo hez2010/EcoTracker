@@ -6,12 +6,9 @@ eco::ECO* create()
     return tracker;
 }
 
-void init(eco::ECO *tracker, cv::Mat *im, const cv::Rect2f *rect, const char* cn_table_filename)
+void init(eco::ECO *tracker, cv::Mat *im, const cv::Rect2f *rect)
 {
     eco::EcoParameters parameters;
-
-    parameters.useCnFeature = false;
-    parameters.cn_features.fparams.tablename = cn_table_filename;
     (*tracker).init(*im, *rect, parameters);
 }
 
