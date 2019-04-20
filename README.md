@@ -1,6 +1,9 @@
 # EcoTracker
 Object tracker using ECO-HC algorithm
 
+## Prerequisties
+- opencv
+
 ## Build
 ```
 git clone https://github.com/hez2010/EcoTracker.git
