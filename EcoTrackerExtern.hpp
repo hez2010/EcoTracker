@@ -17,7 +17,7 @@ extern "C" {
 #ifdef _WIN32
     __declspec(dllexport)
 #endif
-        void init(eco::ECO* tracker, cv::Mat* im, const cv::Rect2f* rect);
+        void init(eco::ECO* tracker, cv::Mat* im, const cv::Rect2f* rect, const char* cn_table_filename);
 #ifdef __cplusplus
 }
 #endif 

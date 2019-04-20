@@ -6,12 +6,12 @@ eco::ECO* create()
     return tracker;
 }
 
-void init(eco::ECO *tracker, cv::Mat *im, const cv::Rect2f *rect)
+void init(eco::ECO *tracker, cv::Mat *im, const cv::Rect2f *rect, const char* cn_table_filename)
 {
     eco::EcoParameters parameters;
 
     parameters.useCnFeature = false;
-    parameters.cn_features.fparams.tablename = "/usr/local/include/opentracker/eco/look_tables/CNnorm.txt";
+    parameters.cn_features.fparams.tablename = cn_table_filename;
     (*tracker).init(*im, *rect, parameters);
 }
 
