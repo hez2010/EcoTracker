@@ -3,7 +3,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 SET(CMAKE_CXX_STANDARD 11)
-SET(CMAKE_CXX_FLAGS "-O3 -lm")
+SET(CMAKE_CXX_FLAGS "-O3 -lm /O3 /lm")
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_DIRS})
