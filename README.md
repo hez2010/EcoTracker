@@ -21,4 +21,4 @@ msbuild INSTALL.csproj /p:Configuration=Release /p:TargetPlatform=x64 /m -verbos
 ```
 
 ## Note
-Please build with Release configuration, there're some problems with Debug configuration need to be resolved.  
+Please build with **Release** configuration, there're some problems with Debug configuration need to be resolved.  
