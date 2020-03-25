@@ -1,8 +1,9 @@
 #ifndef INTERPOLATOR_HPP
 #define INTERPOLATOR_HPP
 
+#define _USE_MATH_DEFINES
 #include <opencv2/opencv.hpp>
-#include <math.h>
+#include <cmath>
 #include "debug.hpp"
 
 namespace eco{

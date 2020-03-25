@@ -2,7 +2,7 @@
 #define METRICS_HPP
 
 //#include <cmath>
-#include <math.h>
+#include <cmath>
 #include <opencv2/core.hpp>
 
 class Metrics

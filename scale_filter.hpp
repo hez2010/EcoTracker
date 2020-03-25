@@ -1,6 +1,7 @@
 #ifndef SCALE_FILTER_HPP
 #define SCALE_FILTER_HPP
 
+#define _USE_MATH_DEFINES
 #include "parameters.hpp"
 #include "ffttools.hpp"
 #include "recttools.hpp"

@@ -1,11 +1,11 @@
 #ifndef ECO_HPP
 #define ECO_HPP
 
+#define _USE_MATH_DEFINES
 #include <iostream>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
-#include <thread>
 #include <opencv2/core.hpp>
 #include <opencv2/core/ocl.hpp>
 #include <opencv2/highgui/highgui_c.h>
@@ -21,6 +21,7 @@
 #endif 
 */
 #ifdef USE_MULTI_THREAD
+#include <thread>
 #ifdef _WIN32
 #define NOMINMAX
 #include <Windows.h>
@@ -81,7 +82,7 @@ class ECO
 						   std::vector<cv::Mat> kx, 
 						   std::vector<cv::Mat> ky);
 #ifdef USE_MULTI_THREAD
-	void thread_train();
+	static void thread_train(void *params);
 #endif
 
   private:
@@ -128,7 +129,7 @@ class ECO
 #ifdef USE_MULTI_THREAD
 	bool 				thread_flag_train_;
   public:
-	std::thread			thread_train_;
+	std::thread			*thread_train_ = nullptr;
 #endif
 	
 };

@@ -13,19 +13,11 @@
 
 #include <opencv2/opencv.hpp>
 #include "parameters.hpp"
-#ifndef M_PI
-#define M_PI 3.14159265358979323846264338327950288
-#endif
 
 namespace eco
 {
-#ifdef _WIN32
-#define debug(a,args) //printf("%s(%s:%d) " a "\n", __func__, __FILE__, __LINE__, ##args)
-#define ddebug(a,args) //printf("%s(%s:%d) " a "\n", __func__, __FILE__, __LINE__, ##args)
-#else
-#define debug(a,args...) //printf("%s(%s:%d) " a "\n", __func__, __FILE__, __LINE__, ##args)
-#define ddebug(a,args...) //printf("%s(%s:%d) " a "\n", __func__, __FILE__, __LINE__, ##args)
-#endif
+#define debug(a, ...) //printf("%s(%s:%d) " a "\n", __func__, __FILE__, __LINE__, ##args)
+#define ddebug(a, ...) //printf("%s(%s:%d) " a "\n", __func__, __FILE__, __LINE__, ##args)
 
 using namespace std;
 

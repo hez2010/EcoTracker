@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <numeric>
 #include <opencv2/core/core.hpp>

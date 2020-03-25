@@ -7,7 +7,7 @@
 #define GRADIENTMEX_HPP
 
 #include "wrappers.hpp"
-#include <math.h>
+#include <cmath>
 #include "string.h"
 #include "sse.hpp"
 #include <stdlib.h>

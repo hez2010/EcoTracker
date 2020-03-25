@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+project(EcoTracker)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR})
 
@@ -35,16 +36,9 @@ if(MULTI_THREAD GREATER 0)
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lpthread")
 endif()
 
-set(eco_demo_srcs ${eco_srcs})
-
 #compile eco library
 add_library(ecotracker SHARED ${eco_srcs})
 target_link_libraries(ecotracker ${OpenCV_LIBS})
-
-#compile eco demo
-#add_executable(runecotracker.bin ${eco_demo_srcs})
-
-#target_link_libraries(runecotracker.bin ${OpenCV_LIBS})
 
 install(TARGETS ecotracker
         RUNTIME DESTINATION bin

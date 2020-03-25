@@ -238,7 +238,7 @@ void ECO::init(cv::Mat &im, const cv::Rect2f &rect, const eco::EcoParameters &pa
 	}
 	debug("scalefactor min: %f max: %f", params_.min_scale_factor, params_.max_scale_factor);
 
-	// Set conjugate gradient uptions
+	// Set conjugate gradient options
 	params_.CG_opts.CG_use_FR = true;
 	params_.CG_opts.tol = 1e-6;
 	params_.CG_opts.CG_standard_alpha = true;
@@ -254,7 +254,7 @@ void ECO::init(cv::Mat &im, const cv::Rect2f &rect, const eco::EcoParameters &pa
 	//params_.CG_opts.init_forget_factor = 1;
 	params_.CG_opts.maxit = std::ceil(params_.init_CG_iter / params_.init_GN_iter);
 	debug("-------------------------------------------------------------");
-	ECO_FEATS xl, xlf, xlf_porj;
+	ECO_FEATS xl, xlf, xlf_proj;
 
 	// 2. Extract features from the first frame.
 	xl = feature_extractor_.extractor(im, pos_, vector<float>(1, currentScaleFactor_), params_, is_color_image_);
@@ -283,18 +283,18 @@ void ECO::init(cv::Mat &im, const cv::Rect2f &rect, const eco::EcoParameters &pa
 	}
 
 	// 7. Do the feature reduction for each feature.
-	xlf_porj = FeatureProjection(xlf, projection_matrix_);
+	xlf_proj = FeatureProjection(xlf, projection_matrix_);
 	for (size_t i = 0; i < xlf.size(); i++)
 	{
-		debug("xlf_porj feature %lu 's size: %lu, %d x %d", i, xlf_porj[i].size(), xlf_porj[i][0].rows, xlf_porj[i][0].cols);
+		debug("xlf_proj feature %lu 's size: %lu, %d x %d", i, xlf_proj[i].size(), xlf_proj[i][0].rows, xlf_proj[i][0].cols);
 	}
 
 	// 8. Initialize and update sample space.
 	sample_update_.init(filter_size_, compressed_dim_, params_.nSamples, params_.learning_rate);
-	sample_update_.update_sample_space_model(xlf_porj);
+	sample_update_.update_sample_space_model(xlf_proj);
 
 	// 9. Calculate sample energy and projection map energy.
-	sample_energy_ = FeautreComputePower2(xlf_porj);
+	sample_energy_ = FeautreComputePower2(xlf_proj);
 	vector<cv::Mat> proj_energy = project_mat_energy(projection_matrix_, yf_);
 	for (size_t i = 0; i < sample_energy_.size(); i++)
 	{
@@ -307,10 +307,10 @@ void ECO::init(cv::Mat &im, const cv::Rect2f &rect, const eco::EcoParameters &pa
 
 	// 10. Initialize filter and it's derivative.
 	ECO_FEATS hf, hf_inc;
-	for (size_t i = 0; i < xlf_porj.size(); i++) // for each feature
+	for (size_t i = 0; i < xlf_proj.size(); i++) // for each feature
 	{
-		hf.push_back(vector<cv::Mat>(xlf_porj[i].size(), cv::Mat::zeros(xlf_porj[i][0].size(), CV_32FC2)));
-		hf_inc.push_back(vector<cv::Mat>(xlf_porj[i].size(), cv::Mat::zeros(xlf_porj[i][0].size(), CV_32FC2)));
+		hf.push_back(vector<cv::Mat>(xlf_proj[i].size(), cv::Mat::zeros(xlf_proj[i][0].size(), CV_32FC2)));
+		hf_inc.push_back(vector<cv::Mat>(xlf_proj[i].size(), cv::Mat::zeros(xlf_proj[i][0].size(), CV_32FC2)));
 	}
 	for (size_t i = 0; i < hf.size(); i++)
 	{
@@ -338,12 +338,12 @@ void ECO::init(cv::Mat &im, const cv::Rect2f &rect, const eco::EcoParameters &pa
 		debug("projection_matrix_ %lu: value: %lf %lf", i, minValue, maxValue);
 	}
 	// 13. Re-project the sample and update the sample space.
-	xlf_porj = FeatureProjection(xlf, projection_matrix_);
-	debug("xlf_porj size: %lu, %lu, %d x %d", xlf_porj.size(), xlf_porj[0].size(), xlf_porj[0][0].rows, xlf_porj[0][0].cols);
-	sample_update_.replace_sample(xlf_porj, 0); // put xlf_proj to the smaples_f_[0].
+	xlf_proj = FeatureProjection(xlf, projection_matrix_);
+	debug("xlf_proj size: %lu, %lu, %d x %d", xlf_proj.size(), xlf_proj[0].size(), xlf_proj[0][0].rows, xlf_proj[0][0].cols);
+	sample_update_.replace_sample(xlf_proj, 0); // put xlf_proj to the smaples_f_[0].
 
 	// 14. Update distance matrix of sample space. Find the norm of the reprojected sample
-	float new_sample_norm = FeatureComputeEnergy(xlf_porj);
+	float new_sample_norm = FeatureComputeEnergy(xlf_proj);
 	sample_update_.set_gram_matrix(0, 0, 2 * new_sample_norm);
 
 	// 15. Update filter f.
@@ -494,7 +494,7 @@ bool ECO::update(const cv::Mat &frame, cv::Rect2f &roi)
 	// 4: Train the tracker every Nsth frame, Ns in ECO paper
 	bool train_tracker = frames_since_last_train_ >= (size_t)params_.train_gap;
 
-	// Set conjugate gradient uptions
+	// Set conjugate gradient options
 	params_.CG_opts.CG_use_FR = params_.CG_use_FR;
 	params_.CG_opts.tol = 1e-6;
 	params_.CG_opts.CG_standard_alpha = params_.CG_standard_alpha;
@@ -510,10 +510,10 @@ bool ECO::update(const cv::Mat &frame, cv::Rect2f &roi)
 #ifdef USE_MULTI_THREAD
 		while (thread_flag_train_ == false)
 		{
-			sleep(1); // sleep to allow change of flag in the thread
+			sleep(10); // sleep to allow change of flag in the thread
 		}
-		thread_train_ = std::thread(&ECO::thread_train, this);
-		thread_train_.detach();
+		thread_train_ = new std::thread(&ECO::thread_train, this);
+		thread_train_->detach();
 #else
 		eco_trainer_.train_filter(sample_update_.get_samples(),
 								  sample_update_.get_prior_weights(),
@@ -618,7 +618,7 @@ bool ECO::update(const cv::Mat &frame, cv::Rect2f &roi)
 		cv::circle(resframe, pos_, 5, cv::Scalar(0, 255, 0));
 		cv::circle(resframe, sample_pos, 5, cv::Scalar(0, 255, 225));
 
-		cv::imshow("OpenTracker", resframe);
+		cv::imshow("EcoTracker", resframe);
 
 		if (scores.get_max_score() < params_.max_score_threshhold)
 		{
@@ -630,7 +630,7 @@ bool ECO::update(const cv::Mat &frame, cv::Rect2f &roi)
 			c = c % 256;
 		if (c == 27)
 		{
-			cvDestroyWindow("OpenTracker");
+			cvDestroyWindow("EcoTracker");
 			exit(1);
 		}
 		//cv::waitKey(0);
@@ -656,16 +656,20 @@ bool ECO::update(const cv::Mat &frame, cv::Rect2f &roi)
 }
 
 #ifdef USE_MULTI_THREAD
-void ECO::thread_train()
+void ECO::thread_train(void *params)
 {
 	//debug("thread running");
-	thread_flag_train_ = false;
-	eco_trainer_.train_filter(sample_update_.get_samples(),
-								   sample_update_.get_prior_weights(),
-								   sample_energy_);
+	ECO *eco = (ECO *)params;
+	eco->thread_flag_train_ = false;
+	eco->eco_trainer_.train_filter(eco->sample_update_.get_samples(),
+								   eco->sample_update_.get_prior_weights(),
+								   eco->sample_energy_);
 	//debug("thread end");
-	thread_flag_train_ = true;
-	//pthread_detach(pthread_self());
+	eco->thread_flag_train_ = true;
+	if (eco->thread_train_ != nullptr) {
+		delete eco->thread_train_;
+		eco->thread_train_ = nullptr;
+	}
 }
 #endif
 
@@ -682,7 +686,7 @@ void ECO::init_parameters(const eco::EcoParameters &parameters)
 	params_.cnn_features.fparams.proto = parameters.cnn_features.fparams.proto;
 	params_.cnn_features.fparams.model = parameters.cnn_features.fparams.model;
 	params_.cnn_features.fparams.mean_file = parameters.cnn_features.fparams.mean_file;
-#endif
+#endif	
 	params_.hog_features.fparams.cell_size = parameters.hog_features.fparams.cell_size;
 	params_.cn_features.fparams.tablename = parameters.cn_features.fparams.tablename;
 	params_.ic_features.fparams.tablename = parameters.ic_features.fparams.tablename;

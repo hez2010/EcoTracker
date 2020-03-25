@@ -36,7 +36,7 @@ the use of this software, even if advised of the possibility of such damage.
 #ifndef RECTTOOLS_HPP
 #define RECTTOOLS_HPP
 
-#include <math.h>
+#include <cmath>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/types_c.h>
 #include "debug.hpp"
