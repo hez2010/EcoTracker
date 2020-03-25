@@ -71,12 +71,13 @@ int main(int argc, char **argv)
         vot.report(rect, confidence);
     }
 #ifdef USE_MULTI_THREAD
-    void *status;
-    int rc = pthread_join(tracker.thread_train_, &status);
-    if (rc)
-    {
-        cout << "Error:unable to join!" << rc << std::endl;
-        exit(-1);
+    if (ecotracker.thread_train_ != nullptr) {
+        if (!ecotracker.thread_train_->joinable())
+        {
+            cout << "Error:unable to join!" << rc << std::endl;
+            exit(-1);
+        }
+        ecotracker.thread_train_->join();
     }
 #endif
 }
