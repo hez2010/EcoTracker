@@ -26,10 +26,10 @@ Please build with **Release** configuration, there're some problems with Debug c
 ```cpp
 eco::ECO *tracker = new eco::ECO();
 eco::EcoParameters parameters;
-Rect2f roi; // initial ROI
+Rect2f roi = Rect2f(...); // initial ROI
 tracker->init(/* cv::Mat */ frame, /* cv::Rect2f */ roi, /* eco::EcoParameters */ parameters);
 
-// got updated ROI on new frame
+// got an updated ROI on new frame
 tracker->update(/* cv::Mat */ frame, /* cv::Rect2f */ roi);
 ```
 
