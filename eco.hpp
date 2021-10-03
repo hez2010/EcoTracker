@@ -3,6 +3,7 @@
 
 #define _USE_MATH_DEFINES
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <cmath>
 #include <algorithm>

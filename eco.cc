@@ -900,7 +900,7 @@ void ECO::init_features()
 
 		std::string s;
 		std::string path = params_.cn_features.fparams.tablename;
-		ifstream *read = new ifstream(path);
+		std::ifstream read(path);
 		size_t rows = sizeof(params_.cn_features.fparams.table) / sizeof(params_.cn_features.fparams.table[0]);
 		size_t cols = sizeof(params_.cn_features.fparams.table[0]) / sizeof(float);
 		//debug("rows:%lu,cols:%lu", rows, cols);
@@ -908,10 +908,10 @@ void ECO::init_features()
 		{
 			for (size_t j = 0; j < cols - 1; j++)
 			{
-				getline(*read, s, '\t');
+				std::getline(read, s, '\t');
 				params_.cn_features.fparams.table[i][j] = atof(s.c_str());
 			}
-			getline(*read, s);
+			std::getline(read, s);
 			params_.cn_features.fparams.table[i][cols - 1] = atof(s.c_str());
 		}
 	}
@@ -932,18 +932,18 @@ void ECO::init_features()
 */
 		std::string s;
 		std::string path = params_.ic_features.fparams.tablename;
-		//ifstream *read = new ifstream(path);
-		istringstream *read = new istringstream(path);
+
+		istringstream read(path);
 		size_t rows = sizeof(params_.ic_features.fparams.table) / sizeof(params_.ic_features.fparams.table[0]);
 		size_t cols = sizeof(params_.ic_features.fparams.table[0]) / sizeof(float);
 		for (size_t i = 0; i < rows; i++)
 		{
 			for (size_t j = 0; j < cols - 1; j++)
 			{
-				getline(*read, s, '\t');
+				std::getline(read, s, '\t');
 				params_.ic_features.fparams.table[i][j] = atof(s.c_str());
 			}
-			getline(*read, s);
+			std::getline(read, s);
 			params_.ic_features.fparams.table[i][cols - 1] = atof(s.c_str());
 		}
 	}
