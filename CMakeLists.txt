@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.1)
 project(EcoTracker)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR})
@@ -8,6 +8,8 @@ SET(CMAKE_CXX_FLAGS "-O2 -lm")
 
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_DIRS})
+
+find_package(Threads REQUIRED)
 
 file(GLOB eco_srcs
 	${CMAKE_CURRENT_LIST_DIR}/*.hpp
@@ -32,13 +34,13 @@ if(SIMD GREATER 0)
 endif()
 
 if(MULTI_THREAD GREATER 0)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_MULTI_THREAD -pthread")
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lpthread")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_MULTI_THREAD")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}")
 endif()
 
 #compile eco library
 add_library(ecotracker SHARED ${eco_srcs})
-target_link_libraries(ecotracker ${OpenCV_LIBS})
+target_link_libraries(ecotracker ${OpenCV_LIBS} Threads::Threads)
 
 install(TARGETS ecotracker
         RUNTIME DESTINATION bin
