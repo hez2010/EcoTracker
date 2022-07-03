@@ -34,3 +34,14 @@ tracker->update(/* cv::Mat */ frame, /* cv::Rect2f */ roi);
 ```
 
 Provided C ABI for interop with other languages, see EcoTrackerExtern.hpp
+
+To use this EcoTracker in other projects, clone this project as a submodule and use the following `CMakeLists.txt` as a reference:
+
+```cmake
+find_package(OpenCV REQUIRED)
+
+add_subdirectory(EcoTracker)
+
+add_executable(main "main.cpp")
+target_link_libraries(main ${OpenCV_LIBS} ecotracker)
+```
